@@ -1,11 +1,10 @@
 from flask import Flask, render_template
-from apscheduler.schedulers.background import BackgroundScheduler
+import schedule
+import time
 
 from scraper import scrape
 
 app = Flask(__name__)
-
-scraper_scheduler = BackgroundScheduler()
 
 
 def do_scrape():
@@ -13,11 +12,10 @@ def do_scrape():
 
 @app.route('/')
 def home():
-    return render_template('./templates/home.html')
+    return render_template('home.html')
 
 
 
 if __name__ == '__main__':
-    scraper_scheduler.start()
-    scraper_scheduler.add_job(do_scrape, 'interval', weeks=1)
+    schedule.every(1).week.do(do_scrape)
     app.run(debug=True)
