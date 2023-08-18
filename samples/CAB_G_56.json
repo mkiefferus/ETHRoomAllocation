@@ -1,0 +1,248 @@
+[
+  {
+    "veranstaltungsort": "2374",
+    "date_from": "2023-08-14T20:00:00",
+    "date_to": "2023-08-14T23:59:00",
+    "belegungsserie": {
+      "belegungsserie": "639525",
+      "veranstaltungsort": "60",
+      "belegungstyp": 7
+    }
+  },
+  {
+    "veranstaltungsort": "2374",
+    "date_from": "2023-08-14T00:00:00",
+    "date_to": "2023-08-14T08:00:00",
+    "belegungsserie": {
+      "belegungsserie": "639526",
+      "veranstaltungsort": "60",
+      "belegungstyp": 7
+    }
+  },
+  {
+    "veranstaltungsort": "2374",
+    "date_from": "2023-08-15T20:00:00",
+    "date_to": "2023-08-15T23:59:00",
+    "belegungsserie": {
+      "belegungsserie": "639529",
+      "veranstaltungsort": "60",
+      "belegungstyp": 7
+    }
+  },
+  {
+    "veranstaltungsort": "2374",
+    "date_from": "2023-08-15T00:00:00",
+    "date_to": "2023-08-15T08:00:00",
+    "belegungsserie": {
+      "belegungsserie": "639530",
+      "veranstaltungsort": "60",
+      "belegungstyp": 7
+    }
+  },
+  {
+    "veranstaltungsort": "2374",
+    "date_from": "2023-08-16T00:00:00",
+    "date_to": "2023-08-16T08:00:00",
+    "belegungsserie": {
+      "belegungsserie": "639533",
+      "veranstaltungsort": "60",
+      "belegungstyp": 7
+    }
+  },
+  {
+    "veranstaltungsort": "2374",
+    "date_from": "2023-08-16T20:00:00",
+    "date_to": "2023-08-16T23:59:00",
+    "belegungsserie": {
+      "belegungsserie": "639534",
+      "veranstaltungsort": "60",
+      "belegungstyp": 7
+    }
+  },
+  {
+    "veranstaltungsort": "2374",
+    "date_from": "2023-08-17T20:00:00",
+    "date_to": "2023-08-17T23:59:00",
+    "belegungsserie": {
+      "belegungsserie": "639537",
+      "veranstaltungsort": "60",
+      "belegungstyp": 7
+    }
+  },
+  {
+    "veranstaltungsort": "2374",
+    "date_from": "2023-08-17T00:00:00",
+    "date_to": "2023-08-17T08:00:00",
+    "belegungsserie": {
+      "belegungsserie": "639538",
+      "veranstaltungsort": "60",
+      "belegungstyp": 7
+    }
+  },
+  {
+    "veranstaltungsort": "2374",
+    "date_from": "2023-08-18T00:00:00",
+    "date_to": "2023-08-18T08:00:00",
+    "belegungsserie": {
+      "belegungsserie": "639541",
+      "veranstaltungsort": "60",
+      "belegungstyp": 7
+    }
+  },
+  {
+    "veranstaltungsort": "2374",
+    "date_from": "2023-08-18T20:00:00",
+    "date_to": "2023-08-18T23:59:00",
+    "belegungsserie": {
+      "belegungsserie": "639542",
+      "veranstaltungsort": "60",
+      "belegungstyp": 7
+    }
+  },
+  {
+    "veranstaltungsort": "2374",
+    "date_from": "2023-08-19T00:00:00",
+    "date_to": "2023-08-19T23:59:00",
+    "belegungsserie": {
+      "belegungsserie": "639545",
+      "veranstaltungsort": "60",
+      "belegungstyp": 7
+    }
+  },
+  {
+    "veranstaltungsort": "2374",
+    "date_from": "2023-08-20T00:00:00",
+    "date_to": "2023-08-20T23:59:00",
+    "belegungsserie": {
+      "belegungsserie": "639547",
+      "veranstaltungsort": "60",
+      "belegungstyp": 7
+    }
+  },
+  {
+    "veranstaltungsort": "2374",
+    "date_from": "2023-08-14T08:00:00",
+    "date_to": "2023-08-14T08:30:00",
+    "belegungsserie": {
+      "belegungsserie": "830134",
+      "veranstaltungsort": "2374",
+      "belegungstyp": 2,
+      "veranstaltung": {
+        "veranstaltung": "1462091",
+        "allocationTitle": "Responsible Machine Learning with Insurance Applications",
+        "veranstaltungsnummer": "P401-3931-0",
+        "veranstalter": "Mayer M., Lorentzen-Geiser K.",
+        "veranstaltungstyp": "Sonstige Veranstaltung",
+        "findetStatt": 1
+      }
+    }
+  },
+  {
+    "veranstaltungsort": "2374",
+    "date_from": "2023-08-14T08:30:00",
+    "date_to": "2023-08-14T09:00:00",
+    "belegungsserie": {
+      "belegungsserie": "830135",
+      "veranstaltungsort": "2374",
+      "belegungstyp": 2,
+      "veranstaltung": {
+        "veranstaltung": "1462092",
+        "allocationTitle": "Responsible Machine Learning with Insurance Applications",
+        "veranstaltungsnummer": "P401-3931-0",
+        "veranstalter": "Mayer M., Lorentzen-Geiser K.",
+        "veranstaltungstyp": "Sonstige Veranstaltung",
+        "findetStatt": 1
+      }
+    }
+  },
+  {
+    "veranstaltungsort": "2374",
+    "date_from": "2023-08-14T09:00:00",
+    "date_to": "2023-08-14T09:30:00",
+    "belegungsserie": {
+      "belegungsserie": "830136",
+      "veranstaltungsort": "2374",
+      "belegungstyp": 2,
+      "veranstaltung": {
+        "veranstaltung": "1462093",
+        "allocationTitle": "Responsible Machine Learning with Insurance Applications",
+        "veranstaltungsnummer": "P401-3931-0",
+        "veranstalter": "Mayer M., Lorentzen-Geiser K.",
+        "veranstaltungstyp": "Sonstige Veranstaltung",
+        "findetStatt": 1
+      }
+    }
+  },
+  {
+    "veranstaltungsort": "2374",
+    "date_from": "2023-08-15T08:00:00",
+    "date_to": "2023-08-15T20:00:00",
+    "belegungsserie": {
+      "belegungsserie": "840279",
+      "veranstaltungsort": "2374",
+      "belegungstyp": 15,
+      "veranstaltung": {
+        "veranstaltung": "1467896",
+        "allocationTitle": "StudierendenarbeitsplÃ¤tze - Sommer 2023",
+        "veranstaltungsnummer": "E255724",
+        "veranstalter": "Akademische Dienste",
+        "veranstaltungstyp": "Sonstige Veranstaltung",
+        "findetStatt": 1
+      }
+    }
+  },
+  {
+    "veranstaltungsort": "2374",
+    "date_from": "2023-08-16T08:00:00",
+    "date_to": "2023-08-16T20:00:00",
+    "belegungsserie": {
+      "belegungsserie": "840314",
+      "veranstaltungsort": "2374",
+      "belegungstyp": 15,
+      "veranstaltung": {
+        "veranstaltung": "1467896",
+        "allocationTitle": "StudierendenarbeitsplÃ¤tze - Sommer 2023",
+        "veranstaltungsnummer": "E255724",
+        "veranstalter": "Akademische Dienste",
+        "veranstaltungstyp": "Sonstige Veranstaltung",
+        "findetStatt": 1
+      }
+    }
+  },
+  {
+    "veranstaltungsort": "2374",
+    "date_from": "2023-08-17T08:00:00",
+    "date_to": "2023-08-17T20:00:00",
+    "belegungsserie": {
+      "belegungsserie": "840751",
+      "veranstaltungsort": "2374",
+      "belegungstyp": 15,
+      "veranstaltung": {
+        "veranstaltung": "1467896",
+        "allocationTitle": "StudierendenarbeitsplÃ¤tze - Sommer 2023",
+        "veranstaltungsnummer": "E255724",
+        "veranstalter": "Akademische Dienste",
+        "veranstaltungstyp": "Sonstige Veranstaltung",
+        "findetStatt": 1
+      }
+    }
+  },
+  {
+    "veranstaltungsort": "2374",
+    "date_from": "2023-08-18T08:00:00",
+    "date_to": "2023-08-18T20:00:00",
+    "belegungsserie": {
+      "belegungsserie": "840781",
+      "veranstaltungsort": "2374",
+      "belegungstyp": 15,
+      "veranstaltung": {
+        "veranstaltung": "1467896",
+        "allocationTitle": "StudierendenarbeitsplÃ¤tze - Sommer 2023",
+        "veranstaltungsnummer": "E255724",
+        "veranstalter": "Akademische Dienste",
+        "veranstaltungstyp": "Sonstige Veranstaltung",
+        "findetStatt": 1
+      }
+    }
+  }
+]
