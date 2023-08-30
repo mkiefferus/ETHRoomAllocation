@@ -1,4 +1,21 @@
 {
-  "python.linting.pylintEnabled": true,
-  "python.linting.enabled": true
+    "python.linting.flake8Enabled": true,
+    "python.linting.enabled": true,
+    "python.analysis.autoImportCompletions": true,
+    "flake8.importStrategy": "fromEnvironment",
+    "autopep8.importStrategy": "fromEnvironment",
+    "python.formatting.provider": "autopep8",
+    // ruler for autopep8 and editor ruler
+    "python.formatting.autopep8Args": [
+        "--max-line-length",
+        "100"
+    ],
+    "editor.rulers": [
+        100
+    ],
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
 }
