@@ -19,10 +19,11 @@ TEST_OUTPUT_DIR = os.path.join(TEST_BASE_OUTPUT_DIR, "room_allocations")
 TEST_OUTPUT_NAME = "room_info.json"
 TEST_OUTPUT_FILEPATH = os.path.join(TEST_OUTPUT_DIR, TEST_OUTPUT_NAME)
 TEST_ROOM = "HPH G 1"
+TEST_ROOM_FILEPATH = os.path.join(TEST_OUTPUT_DIR, "-".join(TEST_ROOM.split()) + ".json")
 
 
 def setup_function():
-    os.makedirs(TEST_BASE_OUTPUT_DIR)
+    os.makedirs(TEST_OUTPUT_DIR)
     print("setup")
 
 
@@ -47,10 +48,7 @@ def test__get_filepath():
 
 def test_download_json():
     download_json(
-        url=_get_allocation_url(
-            TEST_ROOM,
-            date(2022, 5, 5).isoformat(),
-            date(2023, 5, 6).isoformat()),
+        url="https://jsonplaceholder.typicode.com/todos/1",
         filepath=TEST_OUTPUT_FILEPATH,
         metadata=dict(
             room=TEST_ROOM,
@@ -60,4 +58,12 @@ def test_download_json():
     )
     assert open(TEST_OUTPUT_FILEPATH, "r").read() != "", "Downloaded json file is empty."
 
-def test_
+
+def test_download_room_allocation():
+    download_room_allocation(
+        room=TEST_ROOM,
+        from_date=date(2022, 5, 5).isoformat(),
+        to_date=date(2023, 5, 6).isoformat(),
+        output_dir=TEST_OUTPUT_DIR
+    )
+    assert os.path.exists(TEST_ROOM_FILEPATH), "Downloaded json file does not exist."
