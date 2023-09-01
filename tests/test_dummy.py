@@ -1,4 +1,4 @@
-
+# flake8: noqa: C0116,W0611
 
 def setup_function():
     print("setup")

@@ -1,4 +1,7 @@
+# flake8: noqa: C0116,W0611
+
 import os
+from pathlib import Path
 from random import randint
 import shutil
 import pytest
@@ -42,8 +45,8 @@ def test__get_allocation_url():
 
 
 def test__get_filepath():
-    assert _get_filepath(room="HPH G 1", output_dir="data/room_allocations") == \
-        "data/room_allocations/HPH-G-1.json"
+    assert Path(_get_filepath(room="HPH G 1", output_dir="data/room_allocations")) == \
+        Path("data/room_allocations/HPH-G-1.json")
 
 
 def test_download_json():

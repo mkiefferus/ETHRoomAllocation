@@ -111,10 +111,22 @@ def get_file_metadata(filepath):
         return json.load(f)["metadata"]
 
 
-def download_global_room_info(output_dir=None, output_name=None) -> str:
+def download_global_room_info(
+        output_dir: str = DEFAULT_OUTPUT_DIR,
+        output_name: str = "room_info.json"
+) -> str:
+    """Downloads the global room info
+
+    Keyword Arguments:
+        output_dir {str} -- Output directory (default: {DEFAULT_OUTPUT_DIR})
+        output_name {str} -- Output filename (default: {"room_info.json"})
+
+    Returns:
+        str -- Path to output file
+    """
     download_json(ROOM_GLOBAL_INFO,
                   filepath=os.path.join(
-                      output_dir or DEFAULT_OUTPUT_DIR, output_name or "room_info.json"
+                      output_dir, output_name
                   ),
                   metadata=dict(ts=date.today().isoformat()))
 
@@ -122,6 +134,14 @@ def download_global_room_info(output_dir=None, output_name=None) -> str:
 def load_room_info(
         filepath: str = os.path.join(DEFAULT_OUTPUT_DIR, "room_info.json")
 ) -> dict:
+    """Loads the room info from the given file
+
+    Keyword Arguments:
+        filepath {str} -- Path to file (default: {os.path.join(DEFAULT_OUTPUT_DIR, "room_info.json")})
+
+    Returns:
+        dict -- Room info from the given file
+    """
     with open(filepath, "r") as fh:
         return json.load(fh)
 
@@ -147,10 +167,10 @@ def load_room_allocations(
     as_dict=False
 ) -> dict:
     """
-    Loads the room allocation from the given file
+    Loads the room allocations from the given directory
 
     Returns:
-        dict -- Room allocation from the given file
+        dict or list -- Room allocations from all the files in the given directory
     """
     room_allocations = {} if as_dict else []
     for filename in os.listdir(directory):
