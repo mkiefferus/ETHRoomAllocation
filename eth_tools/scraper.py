@@ -7,8 +7,8 @@ from urllib import parse
 from datetime import date
 
 
-from eth_tools.requests.session import ETHSession
-from eth_tools.requests.settings import DEFAULT_OUTPUT_DIR
+from eth_tools.eth_requests.session import ETHSession
+from eth_tools.settings import DEFAULT_OUTPUT_DIR
 
 ROOM_GLOBAL_INFO = "https://ethz.ch/bin/ethz/roominfo?path=/rooms&lang=en"
 ROOM_ALLOCATION_BASE = "https://ethz.ch/bin/ethz/roominfo?path=/rooms/"
@@ -38,7 +38,7 @@ def _get_allocation_url(room: str, from_date: str, to_date: str) -> str:
     )
 
 
-def _get_filepath(room: str, output_dir: Optional[str] = None) -> str:
+def _get_filepath(room: str, output_dir: str) -> str:
     """Returns the filepath for the room allocation of the given room
 
     Arguments:
@@ -47,7 +47,6 @@ def _get_filepath(room: str, output_dir: Optional[str] = None) -> str:
     Returns:
         str -- Filepath for the room allocation of the given room
     """
-    output_dir = output_dir or os.path.join(DEFAULT_OUTPUT_DIR, "room_allocations")
     return os.path.join(output_dir, f"{'-'.join(room.split())}.json")
 
 
@@ -79,7 +78,10 @@ def download_json(url: str, filepath: str, metadata: Optional[dict] = None,
 
 
 def download_room_allocation(
-        room: str, from_date: str, to_date: str, output_dir: Optional[str] = None
+        room: str,
+        from_date: str,
+        to_date: str,
+        output_dir: Optional[str] = os.path.join(DEFAULT_OUTPUT_DIR, "room_allocations")
 ):
     """Downloads the room allocation of the given room and date range
 
@@ -91,24 +93,12 @@ def download_room_allocation(
     Returns:
         str -- Room allocation of the given room and date range
     """
+    assert room.count(' ') == 2, "Room name must be in format BUILDING FLOOR ROOM"
     os.makedirs(output_dir) if not os.path.exists(output_dir) else 1
     filepath = _get_filepath(room, output_dir)
     metadata = dict(room=room, from_date=from_date, to_date=to_date)
     return download_json(_get_allocation_url(room, from_date, to_date), filepath,
                          transform_response=lambda x: dict(rooms=x), metadata=metadata)
-
-
-def get_file_metadata(filepath):
-    """Returns the metadata of the given file
-
-    Arguments:
-        filepath {str} -- Path to file
-
-    Returns:
-        dict -- Metadata of the given file
-    """
-    with open(filepath) as f:
-        return json.load(f)["metadata"]
 
 
 def download_global_room_info(
@@ -124,20 +114,37 @@ def download_global_room_info(
     Returns:
         str -- Path to output file
     """
+    os.makedirs(output_dir) if not os.path.exists(output_dir) else 1
     download_json(ROOM_GLOBAL_INFO,
                   filepath=os.path.join(
                       output_dir, output_name
                   ),
-                  metadata=dict(ts=date.today().isoformat()))
+                  metadata=dict(ts=date.today().isoformat()),
+                  transform_response=lambda x: dict(rooms=x)
+                  )
 
 
-def load_room_info(
+def get_file_metadata(filepath):
+    """Returns the metadata of the given file
+
+    Arguments:
+        filepath {str} -- Path to file
+
+    Returns:
+        dict -- Metadata of the given file
+    """
+    with open(filepath) as f:
+        return json.load(f)["metadata"]
+
+
+def load_global_room_info(
         filepath: str = os.path.join(DEFAULT_OUTPUT_DIR, "room_info.json")
 ) -> dict:
     """Loads the room info from the given file
 
     Keyword Arguments:
-        filepath {str} -- Path to file (default: {os.path.join(DEFAULT_OUTPUT_DIR, "room_info.json")})
+        filepath {str} -- Path to file (default:
+            {os.path.join(DEFAULT_OUTPUT_DIR, "room_info.json")})
 
     Returns:
         dict -- Room info from the given file
