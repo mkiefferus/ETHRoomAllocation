@@ -1,4 +1,10 @@
-"""Main module for the scraper"""
+"""
+Scraper for ETHZ room allocation data.
+1. Download the global room info
+2. Download the room allocation of a given room and date range
+3. Load the room allocation from a given file
+4. Load the room allocations from a given directory
+"""
 import json
 import logging
 import os
@@ -98,7 +104,7 @@ def download_room_allocation(
     filepath = _get_filepath(room, output_dir)
     metadata = dict(room=room, from_date=from_date, to_date=to_date)
     return download_json(_get_allocation_url(room, from_date, to_date), filepath,
-                         transform_response=lambda x: dict(rooms=x), metadata=metadata)
+                         transform_response=lambda x: dict(room_allocation=x), metadata=metadata)
 
 
 def download_global_room_info(
@@ -124,7 +130,7 @@ def download_global_room_info(
                   )
 
 
-def get_file_metadata(filepath):
+def load_file_metadata(filepath):
     """Returns the metadata of the given file
 
     Arguments:
@@ -154,8 +160,7 @@ def load_global_room_info(
 
 
 def load_room_allocation(
-    filename: str,
-    directory: str = os.path.join(DEFAULT_OUTPUT_DIR, "room_allocations")
+    filepath: str,
 ) -> dict:
     """
     Loads the room allocation from the given file
@@ -163,8 +168,6 @@ def load_room_allocation(
     Returns:
         dict -- Room allocation from the given file
     """
-    filename = filename if filename.endswith(".json") else "-".join(filename.split())
-    filepath = directory if directory.endswith(".json") else os.path.join(directory, filename)
     with open(filepath, "r") as fh:
         return json.load(fh)
 
@@ -180,9 +183,9 @@ def load_room_allocations(
         dict or list -- Room allocations from all the files in the given directory
     """
     room_allocations = {} if as_dict else []
-    for filename in os.listdir(directory):
+    for filepath in os.listdir(directory):
         if as_dict:
-            room_allocations[filename] = load_room_allocation(filename, directory)
+            room_allocations[filepath] = load_room_allocation(os.path.join(directory, filepath))
         else:
-            room_allocations.append(load_room_allocation(filename, directory))
+            room_allocations.append(load_room_allocation(os.path.join(directory, filepath)))
     return room_allocations
