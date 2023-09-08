@@ -101,9 +101,9 @@ def test_load_room_allocation():
     )
 
     allocation = load_room_allocation(TEST_ROOM_FILEPATH)
-    assert allocation["room_allocation"], "This should contain the room allocation."
-    assert allocation["room_allocation"][0]["date_from"], "This should contain the datetime of 1 allocation."
-    assert allocation["room_allocation"][0]["date_to"], "This should contain the datetime of 1 allocation."
+    assert allocation, "This should contain the room allocation."
+    assert allocation[0]["date_from"], "This should contain the datetime of 1 allocation."
+    assert allocation[0]["date_to"], "This should contain the datetime of 1 allocation."
 
 
 def test_load_room_allocations():
@@ -117,7 +117,7 @@ def test_load_room_allocations():
 
     allocations = load_room_allocations(TEST_OUTPUT_DIR)
     assert allocations[0], "This should contain the room allocation of first room."
-    assert allocations[0]["room_allocation"][0]["date_from"], \
+    assert allocations[0][0]["date_from"], \
         "This should contain the datetime of first allocation of first room."
-    assert allocations[0]["room_allocation"][0]["date_to"], \
+    assert allocations[0][0]["date_to"], \
         "This should contain the datetime of first allocation of first room."

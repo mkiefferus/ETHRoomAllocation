@@ -56,8 +56,12 @@ def _get_filepath(room: str, output_dir: str) -> str:
     return os.path.join(output_dir, f"{'-'.join(room.split())}.json")
 
 
-def download_json(url: str, filepath: str, metadata: Optional[dict] = None,
-                  transform_response: Optional[Any] = None) -> str:
+def download_json(
+    url: str,
+    filepath: str,
+    metadata: Optional[dict] = None,
+    transform_response: Optional[Any] = None,
+) -> str:
     """Downloads the content of the given url
 
     Arguments:
@@ -84,10 +88,11 @@ def download_json(url: str, filepath: str, metadata: Optional[dict] = None,
 
 
 def download_room_allocation(
-        room: str,
-        from_date: str,
-        to_date: str,
-        output_dir: Optional[str] = os.path.join(DEFAULT_OUTPUT_DIR, "room_allocations")
+    room: str,
+    from_date: str,
+    to_date: str,
+    output_dir: str = os.path.join(DEFAULT_OUTPUT_DIR, "room_allocations"),
+    filepath=None,
 ):
     """Downloads the room allocation of the given room and date range
 
@@ -99,17 +104,20 @@ def download_room_allocation(
     Returns:
         str -- Room allocation of the given room and date range
     """
-    assert room.count(' ') == 2, "Room name must be in format BUILDING FLOOR ROOM"
+    assert room.count(" ") == 2, "Room name must be in format BUILDING FLOOR ROOM"
     os.makedirs(output_dir) if not os.path.exists(output_dir) else 1
-    filepath = _get_filepath(room, output_dir)
+    filepath = filepath or _get_filepath(room, output_dir)
     metadata = dict(room=room, from_date=from_date, to_date=to_date)
-    return download_json(_get_allocation_url(room, from_date, to_date), filepath,
-                         transform_response=lambda x: dict(room_allocation=x), metadata=metadata)
+    return download_json(
+        _get_allocation_url(room, from_date, to_date),
+        filepath,
+        transform_response=lambda x: dict(room_allocation=x),
+        metadata=metadata,
+    )
 
 
 def download_global_room_info(
-        output_dir: str = DEFAULT_OUTPUT_DIR,
-        output_name: str = "room_info.json"
+    output_dir: str = DEFAULT_OUTPUT_DIR, output_name: str = "room_info.json"
 ) -> str:
     """Downloads the global room info
 
@@ -121,13 +129,12 @@ def download_global_room_info(
         str -- Path to output file
     """
     os.makedirs(output_dir) if not os.path.exists(output_dir) else 1
-    download_json(ROOM_GLOBAL_INFO,
-                  filepath=os.path.join(
-                      output_dir, output_name
-                  ),
-                  metadata=dict(ts=date.today().isoformat()),
-                  transform_response=lambda x: dict(rooms=x)
-                  )
+    return download_json(
+        ROOM_GLOBAL_INFO,
+        filepath=os.path.join(output_dir, output_name),
+        metadata=dict(ts=date.today().isoformat()),
+        transform_response=lambda x: dict(rooms=x),
+    )
 
 
 def load_file_metadata(filepath):
@@ -144,7 +151,7 @@ def load_file_metadata(filepath):
 
 
 def load_global_room_info(
-        filepath: str = os.path.join(DEFAULT_OUTPUT_DIR, "room_info.json")
+    filepath: str = os.path.join(DEFAULT_OUTPUT_DIR, "room_info.json")
 ) -> dict:
     """Loads the room info from the given file
 
@@ -169,12 +176,11 @@ def load_room_allocation(
         dict -- Room allocation from the given file
     """
     with open(filepath, "r") as fh:
-        return json.load(fh)
+        return json.load(fh)["room_allocation"]
 
 
 def load_room_allocations(
-    directory: str = os.path.join(DEFAULT_OUTPUT_DIR, "room_allocations"),
-    as_dict=False
+    directory: str = os.path.join(DEFAULT_OUTPUT_DIR, "room_allocations"), as_dict=False
 ) -> dict:
     """
     Loads the room allocations from the given directory
@@ -183,9 +189,9 @@ def load_room_allocations(
         dict or list -- Room allocations from all the files in the given directory
     """
     room_allocations = {} if as_dict else []
-    for filepath in os.listdir(directory):
+    for filename in os.listdir(directory):
         if as_dict:
-            room_allocations[filepath] = load_room_allocation(os.path.join(directory, filepath))
+            room_allocations[filename] = load_room_allocation(os.path.join(directory, filename))
         else:
-            room_allocations.append(load_room_allocation(os.path.join(directory, filepath)))
+            room_allocations.append(load_room_allocation(os.path.join(directory, filename)))
     return room_allocations
