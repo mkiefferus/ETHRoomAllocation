@@ -15,7 +15,7 @@ Initially, get recommendation for room now. next : get recommendation for some d
 
 - [ ] Caching mechanism - use downloaded files if up to date. Else update files by downloading again.
 - [ ] Recommendation system for rooms
-  - [ ] Room needs to be "free" or "Studierendenplätze". `empty_rooms(datetime : datetime) -> bool`
+  - [x] Room needs to be "free" or "Studierendenplätze". `empty_rooms(datetime : datetime) -> bool`
     - [ ] Naive approach - iterate over all rooms and test which room is free.
     - [ ] Hash map approach - build mapping : 
     ```py
