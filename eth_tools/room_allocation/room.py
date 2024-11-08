@@ -1,5 +1,7 @@
 import datetime
 import os
+import time
+import numpy as np
 from turtle import down
 from eth_tools.room_allocation.scraper import (
     download_room_allocation,
@@ -8,17 +10,22 @@ from eth_tools.room_allocation.scraper import (
     load_room_allocation,
 )
 
+from eth_tools.room_allocation.fix_scores import GetLocation, GetTypeScore
 
-def __midnight_datetime():
+get_location = GetLocation()
+get_type_score = GetTypeScore()
+
+
+def _midnight_datetime():
     return datetime.datetime.combine(datetime.date.today(), datetime.time.max)
 
 
-def __now_datetime():
+def _now_datetime():
     dt = datetime.datetime.now()
     return datetime.datetime(dt.year, dt.month, dt.day, dt.hour, 0, 0)
 
 
-def __parse_datetime(date_str):
+def _parse_datetime(date_str):
     # 2023-09-01T08:00:00
     return datetime.datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S")
 
@@ -31,13 +38,13 @@ class Room:
         self.room_info_filepath = room_info_filepath or os.path.dirname(
             os.path.dirname(self.filepath)
         )
-        self.room_info = filter(
+        self.room_info = next(filter(
             lambda x: f"{x['building']} {x['floor']} {x['room']}" == self.metadata["room"],
             load_global_room_info(room_info_filepath)["rooms"],
-        )
+        ))
 
     def update_allocation(
-        self, datetime_from=__now_datetime(), datetime_to=__midnight_datetime(), force=False
+        self, datetime_from=_now_datetime(), datetime_to=_midnight_datetime(), force=False
     ):
         download_room_allocation(
             self.metadata["room"],
@@ -47,32 +54,35 @@ class Room:
         )
         self.allocation = load_room_allocation(self.filepath)
 
-    def get_slots(self, datetime_from=__now_datetime(), datetime_to=__midnight_datetime()):
+    def get_slots(self, datetime_from=_now_datetime(), datetime_to=_midnight_datetime()):
         """Returns the slots of the room for the given datetimes
 
         Args:
             datetime_from (_type_, optional): _description_. Defaults to
-                __now_datetime().
+                _now_datetime().
             datetime_to (_type_, optional): _description_. Defaults to
-                __midnight_datetime().
+                _midnight_datetime().
 
         Returns:
             list -- List of slots
         """
+        # TODO: handle empty allocation (no allocation = prob. not open room)
+        if not self.allocation:
+            return []
         # update slots if they are not up to date
-        if __parse_datetime(self.allocation[-1]["date_to"]) < datetime_to:
+        elif _parse_datetime(self.allocation[-1]["date_to"]) < datetime_to:
             self.update_allocation(datetime_to=datetime_to)
         # filter slots
         return list(
             filter(
-                lambda x: datetime_from <= __parse_datetime(x.get("date_from")) <= datetime_to
-                or datetime_from <= __parse_datetime(x.get("date_to")) <= datetime_to,
+                lambda x: datetime_from <= _parse_datetime(x.get("date_from")) <= datetime_to
+                or datetime_from <= _parse_datetime(x.get("date_to")) <= datetime_to,
                 self.allocation,
             )
         )
 
     def get_available_slots(
-        self, datetime_from=__now_datetime(), datetime_to=__midnight_datetime()
+        self, datetime_from=_now_datetime(), datetime_to=_midnight_datetime()
     ):
         """Returns the available slots of the room for the given datetimes
 
@@ -80,9 +90,9 @@ class Room:
 
         Args:
             datetime_from (_type_, optional): _description_. Defaults to
-                __now_datetime().
+                _now_datetime().
             datetime_to (_type_, optional): _description_. Defaults to
-                __midnight_datetime__().
+                _midnight_datetime__().
         """
         available_slots = []
         for allocation in self.get_slots(datetime_from, datetime_to):
@@ -92,14 +102,83 @@ class Room:
                 available_slots.append(allocation)
         return available_slots
 
-    def is_available(self, datetime_from=__now_datetime(), datetime_to=__midnight_datetime()):
+    def is_available(self, datetime_from=_now_datetime(), datetime_to=_midnight_datetime()):
         """Checks if the room is fully available for the given datetimes"""
         return len(self.get_slots(datetime_from, datetime_to)) == len(
             self.get_available_slots(datetime_from, datetime_to)
         )
+    
+    def get_previous_slots(self, datetime_from=_now_datetime()):
+        """Returns previous slots of the room for the same day
+        
+        Args:
+            datetime_from (_type_, optional): _description_: Current timestamp. Defaults to
+                _now_datetime().
+        """
+        ignore_slot_type = [8] # 8 = "geschlossen"
 
-    def get_score(self, datetime_from=__now_datetime(), datetime_to=__midnight_datetime()):
-        pass
+        previous_slots = self.get_slots(datetime_from.replace(hour=0, minute=0, second=0), 
+                                        datetime_from)
+        return list(filter(lambda x: x.get("belegungsserie", {}).get("belegungstyp") 
+                           not in ignore_slot_type, previous_slots))
+    
+    
+    def get_delta_to_next_slot(self, datetime_from=_now_datetime()):
+        """Returns the time delta to the next slot
+        
+        Args:
+            datetime_from (_type_, optional): _description_: Current timestamp. Defaults to
+                _now_datetime().
+        """
+        evening = datetime_from.replace(hour=22, minute=00, second=00) # Many rooms close at 22:00
+
+        next_slots = self.get_slots(datetime_from, evening)
+        next_slot = next_slots[0] if next_slots else None
+
+        if not next_slot:
+            return evening - datetime_from
+        else:
+            return _parse_datetime(next_slot["date_from"]) - datetime_from
+    
+    def get_distance_to_location(self, current_location):
+        """Returns distance of room to current location."""
+        return get_location(current_location, self.room_info["location"]['areaDesc'])
+
+    def get_score(self, current_location, datetime_from=_now_datetime(), datetime_to=_midnight_datetime()):
+        """Returns the score of the room for the given datetimes"""
+
+        scores = []
+        scores_weights = []
+        
+        # 1. Is room available?
+        scores.append(100*self.is_available(datetime_from, datetime_to))
+        scores_weights.append(0.51)
+        
+        # 2. Distance to location
+        scores.append(-self.get_distance_to_location(current_location))
+        scores_weights.append(0.15)
+
+        # 3. Has room been used before?
+        previous_slots = self.get_previous_slots(datetime_from)
+        scores.append(100 if previous_slots else 0)
+        scores_weights.append(0.11)
+
+        # 4. Room type (e.g. prioritise seminar room over lecture hall)
+        scores.append(get_type_score(self.room_info["type"]))
+        scores_weights.append(0.09)
+
+        # 5. Time to next slot (4 hours before next slot yield max points)
+        delta = self.get_delta_to_next_slot(datetime_from).seconds // 60
+        scores.append(np.clip(100 - (4*60 - delta), 0, 100))
+        scores_weights.append(0.09)
+
+        # 6. Room capacity - Larger rooms attract more people
+        number_of_seats = int(self.room_info.get("seats", 0))
+        scores.append(np.clip(100 - number_of_seats, 0, 100))
+        scores_weights.append(0.05)
+
+        return np.dot(scores, scores_weights)
+
 
     def download_allocation(
         self,

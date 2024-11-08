@@ -12,6 +12,8 @@ from typing import Any, Optional
 from urllib import parse
 from datetime import date
 
+# from anyio import key
+
 
 from eth_tools.eth_requests.session import ETHSession
 from eth_tools.settings import DEFAULT_OUTPUT_DIR
@@ -83,7 +85,7 @@ def download_json(
             logging.warning("Overwriting response metadata field for %s", filepath)
         res_obj["metadata"] = metadata
     with open(filepath, "w") as f:
-        json.dump(res_obj, f)
+        json.dump(res_obj, f, indent=4)
     return filepath
 
 
@@ -176,7 +178,9 @@ def load_room_allocation(
         dict -- Room allocation from the given file
     """
     with open(filepath, "r") as fh:
-        return json.load(fh)["room_allocation"]
+        room_allocation = json.load(fh)["room_allocation"]
+    
+    return room_allocation.sort(key=lambda x: x["date_to"])
 
 
 def load_room_allocations(
