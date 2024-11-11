@@ -1,5 +1,11 @@
-__pycache__
-experimenting
-data
+*__pycache__*
+
+.git
+.github
+
 .venv
 .pytest_cache
+
+[Dd]ata
+
+experimenting
