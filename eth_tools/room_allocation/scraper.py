@@ -16,7 +16,7 @@ from datetime import date
 
 
 from eth_tools.eth_requests.session import ETHSession
-from eth_tools.settings import DEFAULT_OUTPUT_DIR
+from eth_tools.settings import ROOMS_DIR, ROOM_CONFIG
 
 ROOM_GLOBAL_INFO = "https://ethz.ch/bin/ethz/roominfo?path=/rooms&lang=en"
 ROOM_ALLOCATION_BASE = "https://ethz.ch/bin/ethz/roominfo?path=/rooms/"
@@ -93,7 +93,7 @@ def download_room_allocation(
     room: str,
     from_date: str,
     to_date: str,
-    output_dir: str = os.path.join(DEFAULT_OUTPUT_DIR, "room_allocations"),
+    output_dir: str = ROOMS_DIR,
     filepath=None,
 ):
     """Downloads the room allocation of the given room and date range
@@ -119,7 +119,7 @@ def download_room_allocation(
 
 
 def download_global_room_info(
-    output_dir: str = DEFAULT_OUTPUT_DIR, output_name: str = "room_info.json"
+    output_path:str = ROOM_CONFIG,
 ) -> str:
     """Downloads the global room info
 
@@ -130,10 +130,10 @@ def download_global_room_info(
     Returns:
         str -- Path to output file
     """
-    os.makedirs(output_dir) if not os.path.exists(output_dir) else 1
+    os.makedirs(os.path.dirname(output_path)) if not os.path.exists(os.path.dirname(output_path)) else 1
     return download_json(
         ROOM_GLOBAL_INFO,
-        filepath=os.path.join(output_dir, output_name),
+        filepath=ROOM_CONFIG,
         metadata=dict(ts=date.today().isoformat()),
         transform_response=lambda x: dict(rooms=x),
     )
@@ -153,7 +153,7 @@ def load_file_metadata(filepath):
 
 
 def load_global_room_info(
-    filepath: str = os.path.join(DEFAULT_OUTPUT_DIR, "room_info.json")
+    filepath: str = ROOM_CONFIG,
 ) -> dict:
     """Loads the room info from the given file
 
@@ -184,7 +184,7 @@ def load_room_allocation(
 
 
 def load_room_allocations(
-    directory: str = os.path.join(DEFAULT_OUTPUT_DIR, "room_allocations"), as_dict=False
+    directory: str = ROOMS_DIR, as_dict=False
 ) -> dict:
     """
     Loads the room allocations from the given directory
