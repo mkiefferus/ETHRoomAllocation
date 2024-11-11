@@ -1,4 +1,4 @@
 import os
+from pathlib import Path
 
-
-DEFAULT_OUTPUT_DIR = os.path.join("data")
+DEFAULT_OUTPUT_DIR = Path("output")

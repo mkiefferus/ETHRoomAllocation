@@ -2,6 +2,7 @@ import os
 import json
 import datetime
 from pathlib import Path
+from tabulate import tabulate
 
 import logging
 import argparse
@@ -80,18 +81,17 @@ def run(args):
     # Print result
     # ============
 
+    sorted_scores = sorted(scores, key=scores.get, reverse=True)
     if args.top10:
         try:
-            top5 = sorted(scores, key=scores.get, reverse=True)[:10]
+            table_data = [[room, scores[room]] for room in sorted_scores[:10]]
         except ValueError:
-            LOGGER.warning("Less than 5 rooms found.")
-            top5 = sorted(scores, key=scores.get, reverse=True)
-
-        for i, room_name in enumerate(top5):
-            LOGGER.info(f"{i+1}. {room_name} - Score: {scores[room_name]}")
+            LOGGER.warning("Less than 10 rooms found.")
+            table_data = [[room, scores[room]] for room in sorted_scores]
     else:
-        best_room = max(scores, key=scores.get)
-        LOGGER.info(f"Best room: {best_room} - Score: {scores[best_room]}")
+        table_data = [[room, scores[room]] for room in sorted_scores[:1]]
+    
+    print(tabulate(table_data, headers=["Room", "Score"], tablefmt="fancy_grid"))
 
 def main():
     """Run search for best room."""
