@@ -13,7 +13,7 @@ conda activate room-allocation
 pip install -e .
 ```
 
-## :person_running: Running from commandline
+## :running: Running from commandline
 
 We provide a helper script for easy usage.
 ```bash
