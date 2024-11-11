@@ -34,6 +34,21 @@ def process_room(i, room_data, from_date, total_rooms):
         )
     except Exception as e:
         LOGGER.error(f"Failed to download room {i+1}: {e}")
+
+
+def get_rooms_info(rooms, location, building=None):
+    """
+    Get rooms info from global room info.
+    """
+    rooms_info = ([room for room in rooms \
+                   if room["location"]["areaDesc"] == location])
+    
+    if building:
+        rooms_info = ([room for room in rooms_info \
+                      if room["building"] == building])
+        assert rooms_info, f"No rooms found in building {building}. Check building name."
+
+    return rooms_info
         
 
 def run(args):
@@ -58,37 +73,42 @@ def run(args):
 
     to_date = from_date + datetime.timedelta(hours=args.duration)
 
-    # ========
-    # Init run
-    # ========
+    # ========================
+    # Ensure data availability
+    # ========================
 
+    # Check if desired rooms are present
+    if os.path.exists(ROOM_CONFIG) and os.path.exists(ROOMS_DIR) and not args.force_update:
+        room_info = load_global_room_info(ROOM_CONFIG)
+        
+        target_rooms = get_rooms_info(room_info["rooms"], args.location, args.building)
+        target_rooms_names = {f"{room['building']}-{room['floor']}-{room['room']}" for room in target_rooms}
+        downloaded_rooms = {room.stem for room in ROOMS_DIR.iterdir() if room.suffix == ".json"}
+
+        if target_rooms_names.intersection(downloaded_rooms) != target_rooms_names:
+            args.force_update = True
+            LOGGER.debug("Not all room files present. Forcing update.")
+
+    # Fetch missing room information
     if not os.path.exists(ROOM_CONFIG) or args.force_update:
 
         if args.force_update:
             LOGGER.debug("Force update flag set. Pulling new room info.")
-            shutil.rmtree(ROOMS_DIR, ignore_errors=True)
         else:
             LOGGER.debug("Room info file not found. Pulling new one.")
 
         global_room_info_path = download_global_room_info()
         room_info = load_global_room_info(global_room_info_path)
 
-        # Ignore rooms that are not in the same area
-        room_info["rooms"] = ([room for room in room_info["rooms"] \
-                              if room["location"]["areaDesc"] == args.location])
-        
-        if args.building:
-            room_info["rooms"] = ([room for room in room_info["rooms"] \
-                                  if room["building"] == args.building])
-            assert room_info["rooms"], f"No rooms found in building {args.building}. Check building name."
+        rooms = get_rooms_info(room_info["rooms"], args.location, args.building)
 
-        total_rooms = len(room_info["rooms"])
+        total_rooms = len(rooms)
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
             # Prepare futures
             futures = [
                 executor.submit(process_room, i, room_data, from_date, total_rooms)
-                for i, room_data in enumerate(room_info["rooms"])
+                for i, room_data in enumerate(rooms)
             ]
 
             # Process as they complete
