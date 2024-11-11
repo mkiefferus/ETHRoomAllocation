@@ -17,7 +17,7 @@ pip install -e .
 
 We provide a helper script for easy usage.
 ```bash
-find-room -l "Zürich Zentrum" --top10
+find-room -l "Zürich Zentrum"
 ```
 
 This will print the top 10 recommendations for the specified location. Available locations are:
@@ -43,6 +43,7 @@ python -m eth_tools.room_allocation.run -l "Zürich Zentrum" --top10
 
 - `-b`, `--building`: Constrain search to building.
 - `--force_update`: Fetch new room information for update schedule (higher data intensity).
+- `--top`: Define number of rooms in output.
 - `-d`, `--duration`: Specify the time duration for which the room should be free.
 - `--when`: Specify the date and time when the room should be free. Use the format 'YYYY-MM-DDTHH:MM:SS'
 - `-v`, `--verbose`: Enable verbose logging

@@ -64,6 +64,7 @@ def run(args):
     VALID_LOCATIONS = GetLocation().locations
 
     assert args.location in VALID_LOCATIONS, f"Invalid location. Valid locations are: {', '.join(VALID_LOCATIONS)}"
+    assert args.top > 1, "Top rooms should be greater than 1."
 
     from_date = (
         datetime.datetime.strptime(args.when, "%Y-%m-%dT%H:%M:%S")
@@ -145,14 +146,11 @@ def run(args):
     # ============
 
     sorted_scores = sorted(scores, key=scores.get, reverse=True)
-    if args.top10:
-        try:
-            table_data = [[room, scores[room]] for room in sorted_scores[:10]]
-        except ValueError:
-            LOGGER.warning("Less than 10 rooms found.")
-            table_data = [[room, scores[room]] for room in sorted_scores]
-    else:
-        table_data = [[room, scores[room]] for room in sorted_scores[:1]]
+    try:
+        table_data = [[room, scores[room]] for room in sorted_scores[:args.top]]
+    except ValueError:
+        LOGGER.warning("Less than 10 rooms found.")
+        table_data = [[room, scores[room]] for room in sorted_scores]
 
     print(tabulate(table_data, headers=["Room", "Score"], tablefmt="fancy_grid"))
 
@@ -182,9 +180,10 @@ def main():
         help="When should room be free. Default is now. Provide under format 'YYYY-MM-DDTHH:MM:SS'.",
     )
     parser.add_argument(
-        "--top10",
-        action="store_true",
-        help="Show top 10 rooms.",
+        "--top",
+        type=int,
+        default=10,
+        help="Show n top rooms.",
     )
     parser.add_argument(
         "-b",
