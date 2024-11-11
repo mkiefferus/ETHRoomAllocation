@@ -1,7 +1,0 @@
-[flake8]
-extend-ignore = E203,PLW514,PLC103,PLR735,PLW106,
-; ignore =
-;     E226 E265 E305 E501 W391 PLE0102
-exclude = .git,__pycache__,docs/source/conf.py,old,build,dist,.venv,
-max-complexity = 10
-max-line-length = 100
