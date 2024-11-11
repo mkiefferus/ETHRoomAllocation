@@ -1,8 +1,6 @@
 import datetime
 import os
-import time
 import numpy as np
-from turtle import down
 from eth_tools.room_allocation.scraper import (
     download_room_allocation,
     load_file_metadata,
