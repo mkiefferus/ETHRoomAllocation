@@ -179,8 +179,9 @@ def load_room_allocation(
     """
     with open(filepath, "r") as fh:
         room_allocation = json.load(fh)["room_allocation"]
-    
-    return room_allocation.sort(key=lambda x: x["date_to"])
+
+    room_allocation.sort(key=lambda x: x["date_to"])
+    return room_allocation
 
 
 def load_room_allocations(

@@ -73,8 +73,8 @@ class Room:
         # filter slots
         return list(
             filter(
-                lambda x: datetime_from <= _parse_datetime(x.get("date_from")) <= datetime_to
-                or datetime_from <= _parse_datetime(x.get("date_to")) <= datetime_to,
+                lambda x: _parse_datetime(x.get("date_from")) <= datetime_to and
+                          _parse_datetime(x.get("date_to")) >= datetime_from,
                 self.allocation,
             )
         )
@@ -175,8 +175,24 @@ class Room:
         scores.append(np.clip(100 - number_of_seats, 0, 100))
         scores_weights.append(0.05)
 
-        return np.dot(scores, scores_weights)
+        # details = f"""
+        # Room {self.metadata["room"]}:
+        # - Available: {scores[0]:.2f} * {scores_weights[0]:.2f} = {scores[0]*scores_weights[0]:.2f}
+        # - Distance: -{scores[1]:.2f} * {scores_weights[1]:.2f} = -{scores[1]*scores_weights[1]:.2f}
+        # - Previous usage: {scores[2]:.2f} * {scores_weights[2]:.2f} = {scores[2]*scores_weights[2]:.2f}
+        # - Room type: {scores[3]:.2f} * {scores_weights[3]:.2f} = {scores[3]*scores_weights[3]:.2f}
+        # - Time to next slot: {scores[4]:.2f} * {scores_weights[4]:.2f} = {scores[4]*scores_weights[4]:.2f}
+        # - # Seats: {scores[5]:.2f} * {scores_weights[5]:.2f} = {scores[5]*scores_weights[5]:.2f}
+        
+        # Total score: {np.dot(scores, scores_weights):.2f}
+        # """
 
+        return np.dot(scores, scores_weights)
+    
+    # def get_score(self, current_location, datetime_from=_now_datetime(), datetime_to=_midnight_datetime()):
+    #     """Returns the score of the room for the given datetimes"""
+    #     score, _ = self.get_detailed_score(current_location, datetime_from, datetime_to)
+    #     return score
 
     def download_allocation(
         self,
