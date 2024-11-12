@@ -1,6 +1,11 @@
 import datetime
 import os
 import numpy as np
+from zoneinfo import ZoneInfo
+
+CET = ZoneInfo("Europe/Zurich")
+
+# Local imports
 from eth_tools.room_allocation.scraper import (
     download_room_allocation,
     load_file_metadata,
@@ -13,19 +18,18 @@ from eth_tools.room_allocation.fix_scores import GetLocation, GetTypeScore
 get_location = GetLocation()
 get_type_score = GetTypeScore()
 
-
 def _midnight_datetime():
-    return datetime.datetime.combine(datetime.date.today(), datetime.time.max)
-
+    naive_dt = datetime.datetime.combine(datetime.date.today(), datetime.time.max)
+    return naive_dt.replace(tzinfo=CET)
 
 def _now_datetime():
-    dt = datetime.datetime.now()
-    return datetime.datetime(dt.year, dt.month, dt.day, dt.hour, 0, 0)
+    return datetime.datetime.now(CET).replace(minute=0, second=0, microsecond=0)
 
 
 def _parse_datetime(date_str):
     # 2023-09-01T08:00:00
-    return datetime.datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S")
+    naive_dt = datetime.datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S")
+    return naive_dt.replace(tzinfo=CET)
 
 
 class Room:
