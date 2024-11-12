@@ -1,11 +1,12 @@
 # app.py
 import streamlit as st
-import concurrent.futures
 import datetime
 import logging
 import os
 from pathlib import Path
-import pandas as pd  # New import for DataFrame handling
+import pandas as pd
+from zoneinfo import ZoneInfo # Handle streamlit timezone
+import concurrent.futures
 
 # Local imports (adjust these as per your project structure)
 from eth_tools.room_allocation.room import Room
@@ -22,6 +23,9 @@ logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
 MAX_WORKERS = 8  # Adjust as needed
 
+# Define CET timezone (handles both CET and CEST automatically)
+CET = ZoneInfo("Europe/Zurich")
+
 def main():
     st.title("ETHZ Empty Room Finder")
 
@@ -31,14 +35,18 @@ def main():
     building = st.text_input("Building (optional)")
     duration = st.number_input("Duration in hours", min_value=1, value=4)
     date = st.date_input("Date", value=datetime.date.today())
-    time = st.time_input("Time", value=datetime.datetime.now().time())
+    
+    # Get current CET time
+    current_cet_time = datetime.datetime.now(CET).time()
+    time = st.time_input("Time", key="time")
+    
     top_n = st.number_input("Number of top rooms to display", min_value=1, value=10)
     user_force_update = st.checkbox("Force update room info")
 
     # When the user clicks the 'Search' button
     if st.button("Search"):
-        # Combine date and time into a datetime object
-        when = datetime.datetime.combine(date, time)
+        # Combine date and time into a timezone-aware datetime object
+        when = datetime.datetime.combine(date, time).replace(tzinfo=CET)
         # Run the room search
         with st.spinner("Searching for available rooms..."):
             results = run_search(

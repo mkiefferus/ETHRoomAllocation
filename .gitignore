@@ -2,6 +2,7 @@
 
 .git
 .github
+.devcontainer
 
 .venv
 .pytest_cache
